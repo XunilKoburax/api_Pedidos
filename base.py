@@ -32,3 +32,4 @@ class payment(BaseModel):
     id_order= int
     payment = float
     pay_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+
