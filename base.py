@@ -10,27 +10,23 @@ from enum import Enum
 app  =  FastAPI()
 
 class person(BaseModel):
-    id: int = Field(
+    id: Optional[int] = Query(
+        ...,
         gt=0
     )
-    name : str = Field(
+    name : Optional[str] = Query(
         ...,
         min_length =3, 
         max_length = 50,
-        title="Person Name",
-        examples="Maria"
+        title="Person Name"
     )
-    phone : str = Field(
+    phone : Optional[str] = Query(
         ..., 
         min_length = 10,
         max_length = 10,
-        title="Phone number",
-        examples="2345678910"
+        title="Phone number"
         )
-    email : Optional[EmailStr] = Field (
-        title="email",
-        examples="example@example.com"
-    )
+    email : EmailStr
 class categorias(Enum):
     Primaria = "Primaria"
     Secundaria_t = "Secundaria Tecnica"
@@ -40,37 +36,33 @@ class product(BaseModel):
     id : Optional[int] = Field(
         ...,
         title="id",
-        gt=0,
+        gt=0
     )
-    description : str = Field(
+    description : Optional[str] = Field(
         ...,
         title="Description",
         min_length=3,
-        max_length=50,
-        examples="Pans Secundaria Técnica"
-    )
-    cost : Optional[float] =Field(
+        max_length=50
+        )
+    cost : Optional[int] =Field(
         ...,
         title="Cost",
-        gt=0,
-        examples="200.00"
+        gt=0
     )
-    remaining : Optional[float] =Field(
+    remaining : Optional[int] =Field(
         ...,
         title="Remaining",
-        ge=0,
-        examples="0.00"
+        ge=0
     )
-    total_cost : Optional[float] =Field(
+    total_cost : Optional[int] =Field(
         ...,
         title="Total",
-        ge=0,
-        examples="200.00"
+        ge=0
     )
     categoria : Optional[categorias] = Field(default = None)
 
 
-class order(BaseModel):
+class Order(BaseModel):
     id : int
     id_product : int
     id_person : int
@@ -79,30 +71,46 @@ class payment(BaseModel):
     id : Optional[int] = Field(
         title="id",
         description="payment id",
-        gt=0,
-        examples="0"
+        gt=0, 
+        default= None
     )
     id_order: Optional[int] = Field(
         title="id_order",
         description="Order id",
-        gt=0,
-        examples="0"
+        ge=0, 
+        default= None
     )
-    payment : Optional[float] = Field(
+    payment : Optional[int] = Field(
         title="payment",
         description="payment $$",
-        gt=0,
-        examples="20"
+        gt=0, 
+        default= None
     )
-    pay_date : Optional[str] = Field(
+    pay_date : Optional[datetime] = Field(
         ...,
         title="datetime",
         description="Transaction Time Stamp",
-        examples="11-08-2022 14:00:23",
-        min_length=19,
-        
         ) 
 
 @app.get("/")
 def home():
     return "Welcome to orders API"
+
+
+@app.post("/addOrder/")
+def add_order(
+    Person :  person = Body(...),
+    Product : product = Body(...),
+    GetOrder : Order = Body(...),
+    Payment : payment = Body(...)
+    ):
+    order = {
+        "id": Person.id,
+        "id_product": Product.id,
+        "id_Order" : GetOrder.id,
+        "id_Payment" : Payment.id
+        
+    }
+    return order
+    
+
