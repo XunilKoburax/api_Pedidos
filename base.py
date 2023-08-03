@@ -49,22 +49,12 @@ class product(BaseModel):
         title="Cost",
         gt=0
     )
-    remaining : Optional[int] =Field(
-        ...,
-        title="Remaining",
-        ge=0
-    )
-    total_cost : Optional[int] =Field(
-        ...,
-        title="Total",
-        ge=0
-    )
     categoria : Optional[categorias] = Field(default = None)
 
 
 class Order(BaseModel):
     id : int
-    id_product : int
+    id_product : list
     id_person : int
 
 class payment(BaseModel):
@@ -86,6 +76,16 @@ class payment(BaseModel):
         gt=0, 
         default= None
     )
+    remaining : Optional[int] =Field(
+        ...,
+        title="Remaining",
+        ge=0
+    )
+    total_cost : Optional[int] =Field(
+        ...,
+        title="Total",
+        ge=0
+    )
     pay_date : Optional[datetime] = Field(
         ...,
         title="datetime",
@@ -95,6 +95,27 @@ class payment(BaseModel):
 @app.get("/")
 def home():
     return "Welcome to orders API"
+
+@app.post("/create_person")
+def create_person(Person : person = Body(...)):
+    #Commit the person in DB
+    return f"Person {Person.name} has been created"
+
+@app.post("/add_product")
+def create_product(Product : product = Body(...)):
+    #Commit the product in DB
+    return f"Product {Product.description} has been created"
+
+@app.post("/add_order")
+def create_order(Order : Order= Body(...)):
+    #Create order
+
+    #Get Product list
+
+    #Add product list
+    
+    return f"Your order id is: {Order.id}"
+
 
 
 @app.post("/addOrder/")
